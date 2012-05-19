@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine on 
+RewriteCond $1 !^(index\.php|images|css|javascript|rte|captcha|robots\.txt) 
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^morecerto.com.br [NC]
+RewriteRule ^(.*)$ http://www.morecerto.com.br/$1 [L,R=301]
