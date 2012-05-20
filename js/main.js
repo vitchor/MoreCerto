@@ -42,7 +42,7 @@ $(function() {
 				updateDistrict(address);
 			});
 			searchMarker.setPosition(location);
-			updateMarker(searchMarker);
+			updateMarker(searchMarker,'searchbar');
 		});
 		e.preventDefault();
 	});		
@@ -56,9 +56,4 @@ $(function() {
 		updateUrl($("#city_select").val());
 		loadByCity();
 	});
-	
-	$(updateWeight).click(function (e) {		
-		//updateMarkers(0);
-		//e.preventDefault();
-	});		
 }); 		

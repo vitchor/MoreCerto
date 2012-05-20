@@ -166,6 +166,7 @@ var idRealEstate= null;
 </script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.sortElements.js"></script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.scrollTo-min.js"></script>
-<script type="text/javascript" src="<?=base_url();?>js/maps.js?d68f39913f901h3ddf44c07357a7d71"></script>
+<script type="text/javascript" src="<?=base_url();?>js/maps.js?d68f39987h3ddf44c07357a7d71"></script>
 <script type="text/javascript" src="<?=base_url();?>js/googlemaps.widgets.js"></script>
-<script type="text/javascript" src="<?=base_url();?>js/main.js"></script>
+<script type="text/javascript" src="<?=base_url();?>js/main.js?d68f39913f9944144c07357a7d733"></script>
+<script type="text/javascript" src="<?=base_url();?>js/analytics.js?t9968f39913f901h3ddf49a7d739"></script>

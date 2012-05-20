@@ -12,6 +12,7 @@ var service;
 var currentMarker;
 var showedRealEstate = false;
 var searchMarker = null;
+var currentAddress=null;
 
 function loadByCity(){
 	var city_state = loadCityState();
@@ -30,7 +31,7 @@ function loadByCity(){
 						,function(data){
 						searchMarker.setPosition(location);
 						map.setCenter(location);
-						updateMarker(searchMarker);		
+						updateMarker(searchMarker,'loadbycity');		
 				});
 			});
 		}
@@ -38,7 +39,7 @@ function loadByCity(){
 			var position = new google.maps.LatLng(data.lat,data.lng);
 			searchMarker.setPosition(position);
 			map.setCenter(position);
-			updateMarker(searchMarker);			
+			updateMarker(searchMarker,'loadbycity');			
 		}
 	});
 }
@@ -176,7 +177,12 @@ function initSliders(){
 	var i=0;
 	$(".slider").each(function(){
 		types.push({type:$(this).attr("id")});
-		$("#"+$(this).attr("id")).slider({value:defaultRates[i++],change:function(){recalculateRealEstate();}});
+		$("#"+$(this).attr("id")).slider({value:defaultRates[i++],
+			change:function(){
+				recalculateRealEstate();
+				trackParameterChange($(this).attr("id"),$(this).slider("value"));
+			}
+		});
 	});
 }
 function initHandlers(){
@@ -184,7 +190,7 @@ function initHandlers(){
 	{
 		var clickedLatLng = e.latLng;
 		searchMarker.setPosition(clickedLatLng);
-		updateMarker(searchMarker);
+		updateMarker(searchMarker,'rightclick');
 	});
 	var input = document.getElementById('search');
 	var autocomplete = new google.maps.places.Autocomplete(input);
@@ -210,8 +216,11 @@ function reverseGeocode(position,callback){
 		}
 	});
 }
-function updateMarker(marker){
+function updateMarker(marker,origin){
 	reverseGeocode(marker.getPosition(),function(address){
+		if(origin!=null) 
+			trackMarkerUpdate(address,origin);
+		currentAddress = address;
 		updateDistrict(address);			
 		address = address.formatted_address;
 		marker.item.find(".name").html(address);
@@ -223,7 +232,7 @@ function updateMarker(marker){
 }
 function addDragHandler(marker){
 	google.maps.event.addListener(marker, 'dragend', function () {
-		updateMarker(marker);
+		updateMarker(marker,'dragend');
 	});
 }
 function zoomExtents(place){
@@ -238,7 +247,6 @@ function createMarker(place,address) {
 	var item=$('#search_item_template').clone();
 	item.attr("id","");
 	item.find(".name").html(address);
-	//$(".search_results").append(item);	
 	
 	if(arguments[2])
 		var radius = arguments[2];
@@ -536,9 +544,11 @@ function createRealEstateMarker(data){
 	  currentInfoWindow =infowindow;
 	  updateUrlRealEstate($(".more_info").attr("id"));
 	  $(".more_info").click(function(e){
+		    trackRealEstateClick(data.url,data.price,index,'Redirect');
 			$.get(base_url + "realestates/click/"+$(this).attr("id"),function(){
 			});
 		});
+	  trackRealEstateClick(data.url,data.price,index,'Map');
 	});
 
 	item.hover(function(){
