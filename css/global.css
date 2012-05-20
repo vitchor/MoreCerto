@@ -215,7 +215,12 @@ border-bottom:1px solid #3294DB;
 .dialog_modal h2{font-size:16px;}
 .dialog_modal p {font-size:13px;}
 #ui-dialog-title-howitworks {font-style:normal;font-size:18px;padding:5px;}
+#ui-dialog-title-create_account {font-style:normal;font-size:18px;padding:5px;}
+#ui-dialog-title-alert_account {font-style:normal;font-size:18px;padding:5px;}
 #ui-dialog-title-error_realestate {font-style:normal;font-size:18px;padding:5px;}
 .dialog_modal .blue-button {font-size:16px;color:white;}
 
 .like_div{display:inline-block;width:45px;height:65px;margin-top:5px;margin-right:5px;margin-left:-5px;}
+.email_input{width:300px;display:block;margin-bottom:20px}
+.email_label{display:inline;font-size:13px;}
+.favorite {padding:10px;}

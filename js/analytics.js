@@ -41,3 +41,15 @@ function trackParameterChange(type,value)
 	if(currentAddress!=null) addAddressVariables(currentAddress);
 	_gaq.push(['_trackEvent', 'Parameter', "Change",type,value]);
 }
+
+function trackEmail(email,type){
+	_gaq.push(['_setCustomVar',
+	            1,                
+	            'Email',     
+	            email        
+	]);
+	_gaq.push(['_trackEvent', 'Account', "PreRegister",type]);
+}
+function trackIntention(type){
+	_gaq.push(['_trackEvent', 'Account', "Display",type]);
+}

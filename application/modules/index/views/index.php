@@ -106,11 +106,7 @@
 							</tbody>
 						</table>
 						<div class="end">							
-							<div class="checkboxes blue-button" style="display:none"</div>
-								Exibir
-								<input type="checkbox" checked="true" id="real_estate_cb">Im&oacute;veis</input>
-								<input type="checkbox" id="services_cb">Servi&ccedil;os</input>
-							</div>							 					
+							<a href="#" class="blue-button" style="display:none" id="save_params">Salvar Preferências</a>
 						</div>			
 					</div>					
 				</div>
@@ -153,6 +149,19 @@
 			   <div id="map_canvas" style="height:510px;"></div>
 			</div>	
 	</div>	
+	
+<div id="create_account" class="dialog_modal" title="Cadastro no MoreCerto">
+	<h2>Quer salvar suas preferências e imóveis favoritos?</h2>
+	<p>Então você precisa ter uma conta no MoreCerto!</p>
+	<p>Digite seu email abaixo:</p>
+	<input type="text" name="email" id="email_input" class="email_input"></input>
+	<a href="#" id="want_account" class="blue-button">Quero ter uma conta do MoreCerto</a>
+</div>
+<div id="alert_account" class="dialog_modal" title="Cadastro no MoreCerto">
+	<h2>Muito obrigado pelo seu interesse!</h2>
+	<p>Agora estamos testando o sistema apenas com alguns usuários, mas assim que tivermos alguma conta disponível entraremos em contato.</p>
+	<a href="#" id="alert_account_close" class="blue-button">Continuar usando o MoreCerto</a>
+</div>
 
 <script type="text/javascript">var base_url = "<?=base_url();?>";</script>
 <script type="text/javascript">
@@ -163,10 +172,23 @@ var idRealEstate= "<?=$realestate->idrealestates;?>";
 var defaultMarkerGeocode = null;
 var idRealEstate= null;
 <?php endif;?>
+var originAccountIntention=null;
+$( "#create_account" ).dialog({modal:true,width:350,height:270,autoOpen:false});
+$( "#alert_account" ).dialog({modal:true,width:400,height:230,autoOpen:false});
+$( "#save_params").click(function(e){
+	e.preventDefault();
+	originAccountIntention="Params";
+	trackIntention('Params');
+	$( "#create_account" ).dialog("open");				
+});
+$( "#alert_account_close").click(function(e){
+	e.preventDefault();
+	$( "#alert_account" ).dialog("close");				
+}); 
 </script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.sortElements.js"></script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.scrollTo-min.js"></script>
-<script type="text/javascript" src="<?=base_url();?>js/maps.js?d68f39987h3ddf44c07357a7d71"></script>
+<script type="text/javascript" src="<?=base_url();?>js/maps.js?d68f7889a7d71"></script>
 <script type="text/javascript" src="<?=base_url();?>js/googlemaps.widgets.js"></script>
-<script type="text/javascript" src="<?=base_url();?>js/main.js?d68f39913f9944144c07357a7d733"></script>
-<script type="text/javascript" src="<?=base_url();?>js/analytics.js?t9968f39913f901h3ddf49a7d739"></script>
+<script type="text/javascript" src="<?=base_url();?>js/main.js?d68f5513f49144c07357a7d733"></script>
+<script type="text/javascript" src="<?=base_url();?>js/analytics.js?t68d39913f901h3ddf49a7d739"></script>

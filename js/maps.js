@@ -180,10 +180,15 @@ function initSliders(){
 		$("#"+$(this).attr("id")).slider({value:defaultRates[i++],
 			change:function(){
 				recalculateRealEstate();
+				showSaveParams();
 				trackParameterChange($(this).attr("id"),$(this).slider("value"));
 			}
 		});
 	});
+}
+function showSaveParams(){
+	$("#save_params").css("display","inline-block");
+	$(".end").css("height","37");
 }
 function initHandlers(){
 	google.maps.event.addListener(map, 'rightclick', function(e)
@@ -506,11 +511,11 @@ function createRealEstateMarker(data){
 				"<h2>"+"R$ "+ parseInt(data.price).toFixed(2)+"</h2>"+
 				'<div class="classification"><div class="cover"></div><div class="progress" style="width: ' + index+'%;"></div></div>'+
 				"<img src='"+realestateImage(data)+"'></img>"+
-				'<iframe class="like_button" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.morecerto.com.br%2Frealestates%2Fshow%2F'+ data.idrealestates+ '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=35&amp;appId=213643752071992" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>' +
+				"<a href='#' class='favorite simple-link blue'>Salvar como Favorito</a>"+
 				"<a target='_blank' class='blue-button more_info' id=\"" + data.idrealestates+"\" href='"+data.url+"'>Veja mais informa&ccedil;&otilde;es</a>"+
 				"</div>";	
 
-	
+	//'<iframe class="like_button" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.morecerto.com.br%2Frealestates%2Fshow%2F'+ data.idrealestates+ '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=35&amp;appId=213643752071992" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>'	
 	var item =	$("<ul class=\"real_state_detail\" id=\""+ data.idrealestates+ "\">"+
 					"<li class=\"imageHolder\">"+
 						"<img src='"+realestateImage(data)+"'></img>"+			
@@ -544,9 +549,16 @@ function createRealEstateMarker(data){
 	  currentInfoWindow =infowindow;
 	  updateUrlRealEstate($(".more_info").attr("id"));
 	  $(".more_info").click(function(e){
+
 		    trackRealEstateClick(data.url,data.price,index,'Redirect');
 			$.get(base_url + "realestates/click/"+$(this).attr("id"),function(){
 			});
+		});
+	  $(".favorite").click(function(e){
+		  	e.preventDefault();
+		  	originAccountIntention="Favorite";
+		  	trackIntention(originAccountIntention);
+			$( "#create_account" ).dialog("open");		
 		});
 	  trackRealEstateClick(data.url,data.price,index,'Map');
 	});
@@ -564,7 +576,6 @@ function createRealEstateMarker(data){
 	
 	$(".search_results").append(item);	
 	
-	if(!$("#real_estate_cb").is(':checked')) marker.setMap(null);
 	return marker;
 }
 var brognoli_data;
