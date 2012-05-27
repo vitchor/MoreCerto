@@ -101,6 +101,9 @@ class RealEstates extends CI_Controller{
 			$this->db->insert("avaliations",array("bank"=>0,"store"=>0,"market"=>0,"gas_station"=>0,"health"=>0,"restaurant"=>0,"bar"=>0));
 			$fid_avaliation =$this->db->insert_id();
 			
+			$area = 0;
+			if($this->input->post("area")) $area=$this->input->post("area");
+			
 			$realestate = array(
 				"thumb"=>$this->input->post("thumb"),
 				"url"=>$this->input->post("url"),
@@ -111,6 +114,7 @@ class RealEstates extends CI_Controller{
 				"agency"=>$this->input->post("agency"),
 				"rooms"=>$this->input->post("rooms"),
 				"kind"=>$this->input->post("kind"),
+				"area"=>$area, 
 				"fidavaliation"=>$fid_avaliation
 			);			
 			$this->db->insert("realestates",$realestate);
@@ -127,8 +131,7 @@ class RealEstates extends CI_Controller{
 			$this->db->update("realestates",array("deleted"=>date('Y-m-d H:i:s')));	
 		}		
 	}
-	public function trending(){
-		
+	public function trending(){		
 		$this->db->join("realestates","realestates.idrealestates = clicks.fidrealestate");
 		$this->db->select_sum("count","clicks");
 		$this->db->select("fidrealestate");
@@ -145,6 +148,7 @@ class RealEstates extends CI_Controller{
 			$lat = $this->input->post('lat');
 			$lng = $this->input->post('lng');
 			$radius = $this->input->post('radius');
+			$type= $this->input->post('type');
 			
 			if($lat==null || $lng==null ||  $radius ==null) return;
 			$query = "SELECT realestates.*, avaliations.*, " .
@@ -152,7 +156,12 @@ class RealEstates extends CI_Controller{
 			"POWER(SIN((".$lng. " -realestates.lng) * pi()/180 / 2), 2) )) as distance FROM realestates ".
 			" inner join avaliations on avaliations.idavaliation = realestates.fidavaliation ".
 			" where active = true ".
-			" and deleted is null ".
+			" and review = false ";
+			
+			if($type!=null && $type != "")
+				$query .= " and type = '".$type."'";
+					
+			$query .= " and deleted is null ".
 			"having distance < " .$radius . " order by distance ";		
 	
 			$realestates = $this->db->query($query);

@@ -15,19 +15,25 @@
 <meta property="og:title" content="MoreCerto - Imóveis para Alugar e Comprar em <?= $city_name;?>" />
 <meta property="og:url" content="http://www.morecerto.com.br/#!/<?=$state;?>/<?=$city;?>" />
 <meta property="og:description" content="Encontre o melhor imóvel em <?= $city_name;?> e compare no mapa de acordo com o que você acha mais importante." />
-<meta property="og:image" content="http://www.morecerto.com.br/images/fb.png" />
+<meta property="og:image" content="http://www.morecerto.com.br/img/fb.png" />
 <?php else:?>
 <title>MoreCerto - Encontre o Melhor Lugar para Morar!</title>
 <meta property="og:title" content="MoreCerto" />
 <meta property="og:url" content="http://www.morecerto.com.br" />
 <meta property="og:description" content="O Morecerto ajuda você a encontrar o melhor imóvel, de acordo com o que você acha mais importante." />
-<meta property="og:image" content="http://www.morecerto.com.br/images/fb.png" />
+<meta property="og:image" content="http://www.morecerto.com.br/img/fb.png" />
 <?php endif;?>
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="MoreCerto" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/cupertino/jquery-ui.css" type="text/css"/>
+<link href="<?=base_url();?>css/bootstrap.css" rel="stylesheet">
+<!--<link href="<?=base_url();?>css/bootstrap-responsive.css" rel="stylesheet"> -->
 <link href="<?=base_url();?>css/global.css" rel="stylesheet" type="text/css" />
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link rel="shortcut icon" href="ico/favicon.ico">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=places"></script>
 </head>

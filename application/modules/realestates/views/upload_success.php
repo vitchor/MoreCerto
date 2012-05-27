@@ -63,7 +63,9 @@ function addRealEstate(index){
 			"address":data[index].address,
 			"type":data[index].type,
 			"agency":data[index].agency,
-			"rooms":data[index].rooms
+			"rooms":data[index].rooms,
+			"area" :data[index].area,
+			"kind" :data[index].kind,
 			},
 		function(response){
 			setTimeout(function(){addRealEstate(index+1);},100);

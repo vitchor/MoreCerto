@@ -1,10 +1,10 @@
 ﻿var map;
 var geocoder;
-var destinationIcon = base_url+"images/downloadicon.png";
-var restaurantIcon = "images/restaurant.png";
+var destinationIcon = base_url+"img/downloadicon.png";
+var restaurantIcon = "img/restaurant.png";
 var currentInfoWindow;
 var MARKER_ZOOM_EXTENT = 14;
-var DEFAULT_RADIUS = 1500;
+var DEFAULT_RADIUS = 3500;
 var markers = new Array();
 var types = new Array();
 var defaultRates=new Array(30,50,40,15,30,10,25,70);
@@ -13,6 +13,9 @@ var currentMarker;
 var showedRealEstate = false;
 var searchMarker = null;
 var currentAddress=null;
+var dragTimer = null;
+var doSearchTimeout = 500;
+var filter ={"type":"rent","kind":"apt"};
 
 function loadByCity(){
 	var city_state = loadCityState();
@@ -119,6 +122,7 @@ function loadCityState(){
 	}		
 	else return null;
 }
+
 function initGoogleMaps() {
 	var latlng = new google.maps.LatLng(-27.588784,-48.535967);
 	geocoder = new google.maps.Geocoder();
@@ -128,10 +132,26 @@ function initGoogleMaps() {
 	  mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
 	service = new google.maps.places.PlacesService(map);
 	initHandlers();	
 	initSliders();
+	google.maps.event.addListener(map, 'dragend', 
+			function() {
+				if(dragTimer)clearTimeout(dragTimer);
+				setTimeout(function(){
+					searchMarker.setPosition(map.getCenter());
+					google.maps.event.trigger(searchMarker,'dragend');
+					dragTimer=null;
+				},doSearchTimeout);
+			});
 	
+	google.maps.event.addListener(map, 'click', 
+			function(event) {
+				map.setCenter(event.latLng);
+				searchMarker.setPosition(event.latLng);
+				google.maps.event.trigger(searchMarker,'dragend');
+			});
 	if(defaultMarkerGeocode==null && loadByID()==null){	
 		if(loadCity()==null)
 			var defaultMarker='Rua Jerônimo Coelho, 389, Florianópolis - SC, 88010-030, Brasil';
@@ -156,9 +176,6 @@ function initGoogleMaps() {
 				var marker = createMarker(location,"",DEFAULT_RADIUS);
 				searchMarker = marker;
 				marker.setPosition(location);
-				/*reverseGeocode(location,function(address){
-					updateDistrict(address);
-				});*/
 			});
 		}
 		else{
@@ -265,11 +282,9 @@ function createMarker(place,address) {
 	map.setZoom(MARKER_ZOOM_EXTENT);
 	searchPlaces(marker,place,radius);
 	addRealEstate(marker.getPosition(),marker.radius);
-	showMarkerHandler(item.find(".view"));
-	removeMarkerHandler(item.find(".remove"));
-	showButtonsHandler(item);
 	var distanceWidget = new DistanceWidget(marker,radius);
 	marker.distanceWidget = distanceWidget;
+	
 	google.maps.event.addListener(distanceWidget, 'distance_changed', function() {
 		var distance = distanceWidget.get('distance');
 		marker.radius = distance;
@@ -384,52 +399,13 @@ function calculateDistances(marker,places,markers,radius) {
 		var index= parseInt(getIndex());
 		$(marker.item).find(".index").text(index.toFixed(1));
 }
-function showButtonsHandler(obj){
-	obj.hover(function(e) {
-		if($(this).find(".index").css("display")=="block"){
-			$(this).find(".index").css("display","none");
-			$(this).find(".remove").css("display","inline-block");
-			$(this).find(".view").css("display","inline-block");
-		}
-		else {
-			$(this).find(".index").css("display","block");
-			$(this).find(".remove").css("display","none");
-			$(this).find(".view").css("display","none");
-		}
-		
-	});
-}
-function showMarkerHandler(obj){
-	obj.live('click',function(e) {
-		var marker = $(this).parent().data('marker');
-		removeRealState();
-		addRealEstate(marker.getPosition(),marker.radius);
-		showMarker(marker);		
-		e.preventDefault();
-	});
-}
+
 function removeMarker(marker){	marker.setMap(null);}
-function removeMarkerHandler(obj){
-	obj.live('click',function(e) {
-		var parent = $(this).parent();
-		$(this).parent().fadeOut(function(){
-			var marker = parent.data('marker');
-			if(marker){
-				if(marker.getVisible()) removeRealState();				
-				setVisibleSubmarkers(marker,false);
-				removeMarker(marker);
-				parent.remove();				
-			}
-		});	
-		e.preventDefault();
-	});
-}
 
 function distance(p1, p2) {
 	if (!p1 || !p2) {
 	  return 0;
 	}
-
 	var R = 6371000; // Radius of the Earth in m
 	var dLat = (p2.lat() - p1.lat()) * Math.PI / 180;
 	var dLon = (p2.lng() - p1.lng()) * Math.PI / 180;
@@ -463,12 +439,14 @@ function indexIcon(index){
 	else if(index>=60 && index <75) var icon =  "yellow/number_"+index+".png";
 	else if(index>=75 && index <85) var icon =  "green/number_"+index+".png";
 	else if(index>=85) var icon =  "blue/number_"+index+".png";
-	return base_url + "images/"+icon;
+	return base_url + "img/"+icon;
 }
 function realestateImage(data){
 	if(data.cached_image==true)
 		return base_url+ "uploads/cache/"+data.idrealestates+".jpg";
-	else return data.thumb;
+	else if(data.thumb!= null && data.thumb!="")
+		return data.thumb;
+	else return base_url + "img/no_image.png";
 }
 function createRealEstateMarker(data){
 	var place = new google.maps.LatLng(data.lat, data.lng);
@@ -485,8 +463,7 @@ function createRealEstateMarker(data){
 		var city =  data.city.capitalize();
 	else var city =  data.city;
 
-	var state =  data.state;
-	
+	var state =  data.state;	
 	
 	var type_kind ="";
 	
@@ -506,34 +483,44 @@ function createRealEstateMarker(data){
 		var info_realestate = type_kind +" em " + city+ ", " + state;
 	}
 	
+	if(parseInt(data.price)==0)
+		var price = "-"; 
+	else var price = "R$ " + parseInt(data.price).toFixed(2);
+	
 	var content ="<div class='info'>"+
 				'<span>'+ info_realestate + "</span>"+
-				"<h2>"+"R$ "+ parseInt(data.price).toFixed(2)+"</h2>"+
-				'<div class="classification"><div class="cover"></div><div class="progress" style="width: ' + index+'%;"></div></div>'+
-				"<img src='"+realestateImage(data)+"'></img>"+
-				"<a href='#' class='favorite simple-link blue'>Salvar como Favorito</a>"+
-				"<a target='_blank' class='blue-button more_info' id=\"" + data.idrealestates+"\" href='"+data.url+"'>Veja mais informa&ccedil;&otilde;es</a>"+
+				"<h2>"+ price+"</h2>"+
+				'<div class="classification"><div class="cover"></div><div class="star" style="width: ' + index+'%;"></div></div>'+
+				"<img src='"+realestateImage(data)+"' onError=\"this.src='"+base_url + "img/no_image.png' \"></img>"+
+				"<a href='#' class='favorite'>Salvar como Favorito</a>"+
+				"<a target='_blank' class='btn btn-primary more_info' id=\"" + data.idrealestates+"\" href='"+data.url+"'>Veja mais informa&ccedil;&otilde;es</a>"+
 				"</div>";	
 
 	//'<iframe class="like_button" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.morecerto.com.br%2Frealestates%2Fshow%2F'+ data.idrealestates+ '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=35&amp;appId=213643752071992" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>'	
-	var item =	$("<ul class=\"real_state_detail\" id=\""+ data.idrealestates+ "\">"+
-					"<li class=\"imageHolder\">"+
-						"<img src='"+realestateImage(data)+"'></img>"+			
-					"</li>"+
-					"<li class=\"description\">"+
-						'<h2>'+ info_realestate +"</h2>"+
-						"<div class=\"avaliation\">"+
-						"<h2 class=\"price\">" + "R$ "+ parseInt(data.price).toFixed(2) +"</h2>"+
-						/*'<a href="#" class="simple-link blue">Ver Serviços da Região</a>'+*/
-						"</div>"+
-						"<div class=\"index_div\">"+
-						'<div class="classification"><div class="cover"></div><div class="progress" style="width: ' + index+'%;"></div></div>'+ 
-						"<span class=\"index\">" +  index+ "</span>"+
-						"<span class=\"index_text\">" + indexToText(index) +"</span>"+
-						"<a href=\"#\" class=\"small\"></a>"+
-						"</div>"+
-					"</li>"+
-				"</ul>");
+	
+	var item = $('<div class="real_state_detail" id="' + data.idrealestates+ '">'+
+					'<div class="real_estate">'+		
+						'<ul class="thumbnails">'+
+							'<li class="span_thumb">'+
+								'<a href="#" class="thumbnail">'+
+									'<img src="' + realestateImage(data) +  '" onError="this.src=\''+base_url + 'img/no_image.png\' " >'+
+								'</a>'+
+							'</li>'+
+							'<li class="real_estate_info">'+
+								'<h4>'+info_realestate+'</h4>'+
+								'<span class="price">'+  price + '</span>'+
+								'<div class="alert alert-info index_div">'+
+									'<div class="classification">'+
+										'<div class="cover"></div>'+
+										'<div class="star" style="width:' + index + '%;"></div>'+
+										'<span class="index">'+index+'</span>'+
+									'</div>'+
+									'<span class="indexName">'+indexToText(index)+'</span>'+
+								'</div>'+
+							'</li>'+
+						'</ul>'+
+					'</div>'+
+				  '</div>');
 	
 	var infowindow = new google.maps.InfoWindow({
 		content: content
@@ -541,7 +528,7 @@ function createRealEstateMarker(data){
 	
 	$(".small").click(function(e){
 		e.preventDefault();
-		$( "#howitworks" ).dialog("open");		
+		$( "#howitworks" ).modal("show");		
 	});
 
 	google.maps.event.addListener(marker, 'click', function() {
@@ -549,7 +536,6 @@ function createRealEstateMarker(data){
 	  currentInfoWindow =infowindow;
 	  updateUrlRealEstate($(".more_info").attr("id"));
 	  $(".more_info").click(function(e){
-
 		    trackRealEstateClick(data.url,data.price,index,'Redirect');
 			$.get(base_url + "realestates/click/"+$(this).attr("id"),function(){
 			});
@@ -558,7 +544,7 @@ function createRealEstateMarker(data){
 		  	e.preventDefault();
 		  	originAccountIntention="Favorite";
 		  	trackIntention(originAccountIntention);
-			$( "#create_account" ).dialog("open");		
+			$( "#create_account" ).modal("show");		
 		});
 	  trackRealEstateClick(data.url,data.price,index,'Map');
 	});
@@ -574,20 +560,13 @@ function createRealEstateMarker(data){
 		$(this).find(".small").css("visibility","hidden");
 	});
 	
-	$(".search_results").append(item);	
+	$("#search_results").append(item);	
 	
 	return marker;
 }
-var brognoli_data;
 $(function(){
 	$(".next").click(function(e){e.preventDefault();nextRealState();});
 	$(".previous").click(function(e){e.preventDefault();previousRealState();});
-	$("#real_estate_cb").click(function(){
-		toggleRealState($(this).is(':checked'));
-	});
-	$("#services_cb").click(function(){
-		setVisibleSubmarkers(currentMarker,$(this).is(':checked'));
-	});
 });
 
 var realStateMarkers= new Array();
@@ -598,7 +577,7 @@ function nextRealState(){
 	if(currentInfoWindow) currentInfoWindow.close();
 	currentRealState++;
 	if(currentRealState>=realStateMarkers.length) currentRealState=0;
-	$(".search_results").scrollTo("#"+realStateMarkers[currentRealState].data.idrealestates);
+	$("#search_results").scrollTo("#"+realStateMarkers[currentRealState].data.idrealestates);
 	google.maps.event.trigger(realStateMarkers[currentRealState].gmaps,'click');
 }
 function previousRealState(){
@@ -606,7 +585,7 @@ function previousRealState(){
 	if(currentInfoWindow) currentInfoWindow.close();
 	currentRealState--;
 	if(currentRealState < 0)  currentRealState=realStateMarkers.length;
-	$(".search_results").scrollTo("#"+realStateMarkers[currentRealState].data.idrealestates);	
+	$("#search_results").scrollTo("#"+realStateMarkers[currentRealState].data.idrealestates);	
 	google.maps.event.trigger(realStateMarkers[currentRealState].gmaps,'click');
 }
 function toggleRealState(visible){
@@ -616,17 +595,30 @@ function toggleRealState(visible){
 	else for(var j=0;j<realStateMarkers.length;j++)
 			realStateMarkers[j].gmaps.setMap(null);			
 }
-function removeRealState(){
-	for(var j=0;j<realStateMarkers.length;j++)
-		removeMarker(realStateMarkers[j].gmaps);
-	realStateMarkers= new Array();
-	$(".search_results").empty();
+function removeRealState(data){
+	var newRealEstatesArray = new Array();
+	
+	for(var i=0;i<realStateMarkers.length;i++){
+		var found=false;
+		for(var j=0;j<data.length;j++){
+			if(realStateMarkers[i].data.idrealestates == data[j].idrealestates)
+			{
+				newRealEstatesArray.push(realStateMarkers[i]);
+				found=true; break;
+			}
+		}
+		if(found==false){
+			removeMarker(realStateMarkers[i].gmaps);		
+			$("#"+realStateMarkers[i].data.idrealestates).remove();
+		}
+	}
+	realStateMarkers= newRealEstatesArray;
 }
 
 function normalizePrice(data){
 	var max = 0;
 	for (i=0;i< data.length; i++)
-		if (parseInt(data[i].price) > max) max = parseInt(data[i].price);
+		if ((parseInt(data[i].price) > max)) max = parseInt(data[i].price);
 	
 	for(i=0;i<data.length;i++){
 		data[i].price_avaliation = 100-(parseInt(data[i].price)/max)*100;
@@ -637,15 +629,27 @@ function addRealEstate(origin,radius){
 		{
 			'lat' :origin.lat(),
 			'lng' : origin.lng(),
-			'radius' :  radius/(1000*1.609344)
+			'radius' :  radius/(1000*1.609344),
+			'type' : filter.type
 		},
 		function(data){
-			removeRealState();
 			data=$.parseJSON(data);
+			removeRealState(data);
 			normalizePrice(data);
 			updateQtyRealEstates(data.length);
-			for(i=0;i<data.length;i++)
-				realStateMarkers.push({gmaps: createRealEstateMarker(data[i]), data:data[i]});
+			
+			for(i=0;i<data.length;i++){
+				var found=false;
+				for(var j=0;j<realStateMarkers.length;j++){
+					if(data[i].idrealestates==realStateMarkers[j].data.idrealestates)
+					{
+						found=true;break;
+					}
+				}
+				if(!found)
+					realStateMarkers.push({gmaps: createRealEstateMarker(data[i]), data:data[i]});
+			}	
+				
 			orderRealEstate();
 			
 			if(!showedRealEstate && idRealEstate){

@@ -25,7 +25,10 @@
 	marker.bindTo('position', this);
 
 	// Create a new radius widget
-	var radiusWidget = new RadiusWidget(radius);
+	//var radiusWidget = new RadiusWidget(radius);
+	var radiusWidget = null;
+
+	/*
 	this.set('radiusWidget',radiusWidget);
 	
 	// Bind the radiusWidget map to the DistanceWidget map
@@ -38,7 +41,7 @@
 	this.bindTo('distance', radiusWidget);
 
 	// Bind to the radiusWidgets' bounds property
-	this.bindTo('bounds', radiusWidget);
+	this.bindTo('bounds', radiusWidget);*/
   }
   DistanceWidget.prototype = new google.maps.MVCObject();
 

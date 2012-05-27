@@ -1,34 +1,52 @@
-	<div class="footer">
-		<div class="container">
-			<span>
-				<a class="simple-link white" href="<?=base_url();?>">Projeto Ganhador do Prêmio Sinapse de Inovação 2012</a>
-			</span>
-			<ul>
-				<li><a class="simple-link white" href="<?=base_url();?>">Home</a></li>
-				<li><a class="simple-link white" href="<?=base_url()?>anuncie">Anuncie</a></li>
-				<li><a id="howitworks_button" class="simple-link white" href="#">Como Funciona</a></li>
-				<li><a class="simple-link white" href="mailto:contato@morecerto.com.br">Entre em Contato</a></li>
-				<li><a class="simple-link white" href="<?=base_url()?>blog">Blog</a></li>
-			</ul>			
-		</div>		
-	</div>
-</div>
-
-<div id="howitworks" class="dialog_modal" title="Como funciona o MoreCerto?">
-	<h2>O MoreCerto ajuda você a encontrar o melhor lugar para morar!</h2>
-	<p>Cada imóvel tem o seu índice <strong>MoreCerto®</strong>,  que é calculado de acordo com a proximidade de determinados serviços, como: Supermercados, Restaurantes, Bares, Bancos, Postos de Gasolina, Hospitais e Farmácias.</p>
+<div class="modal hide" id="about">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Como funciona o MoreCerto?</h3>
+  </div>
+  <div class="modal-body">
+  	<p><strong>O MoreCerto ajuda você a encontrar o melhor lugar para morar!</strong></p>
+    <p>Cada imóvel tem o seu índice <strong>MoreCerto®</strong>,  que é calculado de acordo com a proximidade de determinados serviços, como: Supermercados, Restaurantes, Bares, Bancos, Postos de Gasolina, Hospitais e Farmácias.</p>
 	<p>Você pode personalizar a importância destes serviços através do menu "Mais Opções" e o índice é calculado automaticamente.</p>
 	<p>O objetivo do índice é ajudar você a encontrar o ímovel ideal para alugar ou comprar.</p>
 	<p>Comece a usar agora mesmo e encontre o melhor lugar para morar!</p>
-	<a href="#" id="howitworks_close" class="blue-button">Começar a Usar</a>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-primary" data-dismiss="modal">Começar a Usar</a>
+  </div>
 </div>
+
+<div class="modal hide" id="contact">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Entre em Contato</h3>
+  </div>
+  <div class="modal-body">
+		<p>Quer anunciar no MoreCerto ou dar alguma sugestão?</p>
+		<p>Envie uma mensagem para <a href="mailto:contato@morecerto.com.br">contato@morecerto.com.br</a>.</p>
+		<p>Estamos esperando pelo contato.</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-primary" data-dismiss="modal">Fechar</a>
+  </div>
+</div>
+
 <?php if($this->session->flashdata("error_realestate")):?>
-<div id="error_realestate" class="dialog_modal" title="Imóvel não encontrado">
-	<p>Este imóvel não foi encontrado nos nossos registros ou o usuário não cadastrou o endereço.</p>
+<div class="modal" id="error_realestate">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Imóvel não encontrado</h3>
+  </div>
+  <div class="modal-body">
+  	<p>Este imóvel não foi encontrado nos nossos registros ou o usuário não cadastrou o endereço.</p>
 	<p>Mas aproveite e encontre diversos outros imóveis no MoreCerto!</p>
 	<p>Se você é o anunciante deste imóvel e gostaria de cadastrá-lo no MoreCerto entre em contato.</p>
 	<a href="#" id="error_realestate_close" class="blue-button">Começar a Usar</a>
 	<a class="blue-button" href="mailto:contato@morecerto.com.br">Entre em Contato</a>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn btn-primary">Save changes</a>
+  </div>
 </div>
 <?php endif;?>
 <script type="text/javascript">
@@ -40,18 +58,8 @@
 				$( "#error_realestate" ).dialog("close");				
 			}); 	
 		<?php endif;?>
-		$( "#howitworks" ).dialog({modal:true,width:600,height:420,autoOpen:false});
-		$( "#howitworks_button").click(function(e){
-				e.preventDefault();
-				$( "#howitworks" ).dialog("open");				
-		});
-		$( "#howitworks_close").click(function(e){
-			e.preventDefault();
-			$( "#howitworks" ).dialog("close");				
-		}); 	 	
-			
 		<?php if(isset($howitworks)):?>
-			$( "#howitworks" ).dialog("open");
+			$('#about').modal('show');
 		<?php endif;?>
 	});
 </script>

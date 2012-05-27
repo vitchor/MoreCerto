@@ -75,6 +75,6 @@ unset($base_uri, $base_url);
 define("MAX_RADIUS", 750);
 define("START_RADIUS", 10);
 define("RADIUS_STEP", 50);
-
+define("RELEASE_KEY","6561115as551281919898711191");
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

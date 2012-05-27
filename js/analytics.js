@@ -53,3 +53,6 @@ function trackEmail(email,type){
 function trackIntention(type){
 	_gaq.push(['_trackEvent', 'Account', "Display",type]);
 }
+function trackMenu(type){
+	_gaq.push(['_trackEvent', 'Menu', type]);
+}
