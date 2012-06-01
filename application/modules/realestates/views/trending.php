@@ -12,6 +12,9 @@
 		<td>
 			<a target="_blank"  href="<?=$t->url?>"><?=$t->url?></a>	
 		</td>
+		<td>
+			<img src="<?=$t->thumb?>" onerror="alert('re');"></img>				
+		</td>
 	</tr>
 	<?php endforeach;?>	
 </table>

@@ -667,6 +667,7 @@ function orderRealEstate(){
 function recalculateRealEstate(){
 	for(i=0;i<realStateMarkers.length;i++){
 		var index = calculateIndex(realStateMarkers[i].data);
+		realStateMarkers[i].gmaps.setIcon(indexIcon(index));
 		$("#"+realStateMarkers[i].data.idrealestates).find(".index").text(index);
 		$("#"+realStateMarkers[i].data.idrealestates).find(".progress").css("width",index+"%");
 	}

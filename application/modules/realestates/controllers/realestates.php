@@ -12,9 +12,21 @@ class RealEstates extends CI_Controller{
 	public function create(){
 		$this->load->view('create');
 	}
+	public function bycity(){
+		$this->db->select("city");
+		$this->db->select("count(*) as city_count");
+		$this->db->group_by("city");
+		$this->db->order_by("count(*)","desc");
+		$this->db->where("active",true);
+		$result = $this->db->get("realestates");
+		foreach($result->result() as $city)
+			echo $city->city . " " . $city->city_count . "<br>";
+			
+		echo var_dump($result->result());
+	}
 	public function ufsc($id){
 		$url = "http://classificados.inf.ufsc.br/detail.php?id=".$id;
-		$result = $this->db->get_where("realestates",array("url"=>$url,"active"=>true));
+		$result = $this->db->get_where("realestates",array("url"=>$url,"active"=>true,'review'=>false));
 		if($result->num_rows()>0)
 		{
 			$row= $result->row();
@@ -96,12 +108,25 @@ class RealEstates extends CI_Controller{
 		}	
 	}
 	public function add(){
+		header('Content-type: application/json');
+		$this->load->helper("api/api");
+		
 		$result = $this->db->get_where("realestates",array("url"=>$this->input->post("url")));
-		if($result->num_rows==0){
-			$this->db->insert("avaliations",array("bank"=>0,"store"=>0,"market"=>0,"gas_station"=>0,"health"=>0,"restaurant"=>0,"bar"=>0));
+		if($result->num_rows==0){			
+			$geocode = geocodeAddress($this->input->post("address"));
+			if(!isset($geocode["lat"]) || !isset($geocode["lng"]) ||
+				!isset($geocode["city"]) || !isset($geocode["district"]) ||
+				!isset($geocode["state"])){
+				echo json_encode(array("added"=>false));
+				die();
+			}
+			getPlaces($geocode["lat"],$geocode["lng"],array("500"));
+			$avaliation = avaliateArea($geocode["lat"],$geocode["lng"]);
+			
+			$this->db->insert("avaliations",$avaliation);
 			$fid_avaliation =$this->db->insert_id();
 			
-			$area = 0;
+			$area=0;
 			if($this->input->post("area")) $area=$this->input->post("area");
 			
 			$realestate = array(
@@ -114,15 +139,26 @@ class RealEstates extends CI_Controller{
 				"agency"=>$this->input->post("agency"),
 				"rooms"=>$this->input->post("rooms"),
 				"kind"=>$this->input->post("kind"),
+				"lat"=>$geocode["lat"],
+				"lng"=>$geocode["lng"],
+				"city"=>$geocode["city"],
+				"state"=>$geocode["state"],
+				"district"=>$geocode["district"],
+				"street"=>isset($geocode["street"])?$geocode["street"]:"",
+				"number"=>isset($geocode["number"])?$geocode["number"]:0,
 				"area"=>$area, 
-				"fidavaliation"=>$fid_avaliation
+				"fidavaliation"=>$fid_avaliation,
+				"current_radius"=>0,
+				"active"=>true
 			);			
-			$this->db->insert("realestates",$realestate);
+			$this->db->insert("realestates",$realestate);			
+			echo json_encode(array("avaliation"=>$avaliation,"id"=>$this->db->insert_id()));
 		}	
 		else{
 			$realestate=$result->row();
 			$this->db->where("idrealestates",$realestate->idrealestates);			
 			$this->db->update("realestates",array("price"=>$this->input->post("price")));
+			echo json_encode(array("added"=>false));
 		}	
 	}
 	public function delete($id){
@@ -136,6 +172,7 @@ class RealEstates extends CI_Controller{
 		$this->db->select_sum("count","clicks");
 		$this->db->select("fidrealestate");
 		$this->db->select("url");
+		$this->db->select("thumb");
 		$this->db->where("deleted IS NULL",null,false);
 		$this->db->group_by("fidrealestate");
 		$this->db->order_by("clicks",'desc');

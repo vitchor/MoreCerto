@@ -18,7 +18,7 @@
 			  </li>			  
             </ul>
             <ul class="nav pull-right">
-			  <li><a href="#contact" data-toggle="modal">Projeto Ganhador do Prêmio Sinapse de Inovação 2012</a></li>
+			  <li><a href="http://www.sinapsedainovacao.com.br" target="_blank">Projeto Ganhador do Prêmio Sinapse de Inovação 2012</a></li>
 			</ul>
           </div>
         </div>

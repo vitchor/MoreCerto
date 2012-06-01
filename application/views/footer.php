@@ -22,11 +22,11 @@
   </div>
   <div class="modal-body">
 		<p>Quer anunciar no MoreCerto ou dar alguma sugestão?</p>
-		<p>Envie uma mensagem para <a href="mailto:contato@morecerto.com.br">contato@morecerto.com.br</a>.</p>
-		<p>Estamos esperando pelo contato.</p>
+		<p>Envie uma mensagem para <a href="mailto:contato@morecerto.com.br">contato@morecerto.com.br</a> ou use o formulário abaixo.</p>
+		<iframe src="https://docs.google.com/spreadsheet/embeddedform?formkey=dEJiLXlsTGFsZDBxWHVOeHhGRzBVMnc6MQ&ttl=0" width="500" height="600" frameborder="0" marginheight="0" marginwidth="0">Carregando...</iframe>
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn btn-primary" data-dismiss="modal">Fechar</a>
+  	<a href="#" class="btn" data-dismiss="modal">Fechar</a>
   </div>
 </div>
 

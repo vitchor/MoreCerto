@@ -8,7 +8,7 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=places"></script>
 <script type="text/javascript">
 function getPlaces(){
-	$.getJSON('http://www.morecerto.com.br/api/get_places', function() {
+	$.getJSON('http://www.morecerto.com.br/api/activate', function() {
 		setTimeout(function(){getPlaces();},200);
 	});
 }		
@@ -39,7 +39,7 @@ function geocodeTrue(){
 </head>
 <body>
 <div id="update"></div>
-<button onClick="getPlaces()">Places</button>
+<button onClick="getPlaces()">Single</button>
 <button onClick="avaliation()">Avaliations</button>
 <button onClick="cache()">cache</button>
 <button onClick="geocode()">Geocode</button>

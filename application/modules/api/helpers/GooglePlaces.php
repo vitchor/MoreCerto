@@ -209,13 +209,12 @@ class GooglePlaces
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		$body = curl_exec($ch);
 		curl_close($ch);
-
+		
 		return $body;
 	}
 	protected function _curlCall($url,$topost)
 	{
 		$ch = curl_init();
-		echo ($topost);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);

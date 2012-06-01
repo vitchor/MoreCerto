@@ -1,5 +1,4 @@
 <style type="text/css">
-	body { padding-top: 40px;}
 	html, body { height: 100%; }
 	html {overflow: hidden;}
 </style>
