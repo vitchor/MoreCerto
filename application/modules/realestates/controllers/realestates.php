@@ -157,7 +157,10 @@ class RealEstates extends CI_Controller{
 		else{
 			$realestate=$result->row();
 			$this->db->where("idrealestates",$realestate->idrealestates);			
-			$this->db->update("realestates",array("price"=>$this->input->post("price")));
+			$this->db->update("realestates",array(
+			"price"=>$this->input->post("price"),
+			"thumb"=>$this->input->post("thumb")		
+			));
 			echo json_encode(array("added"=>false));
 		}	
 	}

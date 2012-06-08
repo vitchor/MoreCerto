@@ -60,13 +60,7 @@ $(function() {
 	  	e.preventDefault();
 	  	originAccountIntention="Params";
 	  	trackIntention(originAccountIntention);
-		$( "#create_account" ).modal("show");		
-	});
-	$("#want_account").click(function(){
-		if(originAccountIntention!=null)
-			trackEmail($("#email_input").val(),originAccountIntention);
-		$( "#alert_account" ).modal("show");
-		$( "#create_account" ).modal("hide");
+		$( "#register" ).modal("show");		
 	});
 	$("#hide_left").click(function(e){
 			e.preventDefault();

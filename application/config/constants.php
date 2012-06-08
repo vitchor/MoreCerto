@@ -76,5 +76,7 @@ define("MAX_RADIUS", 750);
 define("START_RADIUS", 10);
 define("RADIUS_STEP", 50);
 define("RELEASE_KEY","65611159891");
+define("EMAIL_KEY","l94as6qQ619d");
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

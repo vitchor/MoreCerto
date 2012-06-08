@@ -544,7 +544,7 @@ function createRealEstateMarker(data){
 		  	e.preventDefault();
 		  	originAccountIntention="Favorite";
 		  	trackIntention(originAccountIntention);
-			$( "#create_account" ).modal("show");		
+			$( "#register" ).modal("show");		
 		});
 	  trackRealEstateClick(data.url,data.price,index,'Map');
 	});

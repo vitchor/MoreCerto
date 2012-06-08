@@ -1,5 +1,11 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+if ( ! function_exists('toJson')){
+	function toJson($json) {
+		header('Content-type: application/json');
+		echo json_encode($json);		
+	}
+}
 
 if ( ! function_exists('indent_json')){
 	function indent_json($json) {

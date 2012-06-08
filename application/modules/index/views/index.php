@@ -134,34 +134,6 @@
 		 <div id="map_canvas"></div>
     </div> 	
 <!-- modals -->
-<div class="modal hide" id="create_account">
-  <div class="modal-header">
-    <button class="close" data-dismiss="modal">×</button>
-    <h3>Cadastro no MoreCerto</h3>
-  </div>
-  <div class="modal-body">
-    <p>Deseja salvar suas configurações e imóveis favoritos?</p>
-	<p>Cadastre seu email abaixo:</p>
-	<input type="text" name="email" id="email_input" class="email_input"></input>
-  </div>
-  <div class="modal-footer">
-    <a href="#" id="want_account" data-dismiss="modal" class="btn btn-primary">Quero ter uma conta do MoreCerto</a>
-  </div>
-</div>
-
-<div class="modal hide" id="alert_account">
-  <div class="modal-header">
-    <button class="close" data-dismiss="modal">×</button>
-    <h3>Cadastro no MoreCerto</h3>
-  </div>
-  <div class="modal-body">
-    <p>Agora estamos testando o sistema apenas com alguns usuários, mas assim que tivermos alguma conta disponível entraremos em contato.</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn btn-primary" data-dismiss="modal">Continuar usando o MoreCerto</a>
-  </div>
-</div>
-
 <!-- template -->
 <div class="row hide template">
 	<div class="span5 real_estate">		
@@ -185,7 +157,21 @@
 			</li>
 		</ul>
 	</div>
-  </div>  
+  </div>
+<!-- modals -->
+<!-- modal_login -->
+<?php $this->load->view("login")?>;
+<!-- modal_profile -->
+<?php $this->load->view("profile")?>;
+<!-- modal_register -->
+<?php $this->load->view("register")?>;
+<!-- modal_confirm -->
+<?php 
+if($this->session->flashdata("notconfirmed"))
+	$this->load->view("notconfirmed");
+else if($this->session->flashdata("confirmed"))
+	$this->load->view("confirmed");
+?>
 <!-- scripts -->
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>	
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=places"></script>
@@ -207,6 +193,7 @@
 		  addRealEstate(searchMarker.getPosition(),searchMarker.radius);
 	});
 </script>
+<script type="text/javascript" src="<?=base_url();?>js/index/index.js"></script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.sortElements.js"></script>
 <script type="text/javascript" src="<?=base_url();?>js/jquery.scrollTo-min.js"></script>
 <script type="text/javascript" src="<?=base_url();?>js/maps.js?<?=RELEASE_KEY;?>"></script>

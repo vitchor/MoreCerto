@@ -50,8 +50,8 @@ $active_record = TRUE;
 
 $db['local']['hostname'] = 'localhost';
 $db['local']['username'] = 'root';
-$db['local']['password'] = '';
-$db['local']['database'] = 'iaddress';
+$db['local']['password'] = '040196';
+$db['local']['database'] = 'morecerto';
 $db['local']['dbdriver'] = 'mysql';
 $db['local']['dbprefix'] = '';
 $db['local']['pconnect'] = TRUE;
